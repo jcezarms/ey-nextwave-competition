@@ -84,8 +84,10 @@ def distplot(df, index, figsize=(12, 8), groupby='hash', label='', ax=None):
     sns.set(style="white", palette="muted", color_codes=True)
     sns.distplot(grouped.mean().values, ax=ax, label=label)
 
-def plot_avg_distance(avg_list, figsize, title='Average Distance Traveled', labels=[]):
-    ax = plt.subplot(len(avg_list), 1, 1)
+def plot_avg_distance(avg_list, figsize, title='Average Distance Traveled', labels=[], ax=None):
+    if ax is None:
+        ax = plt.subplot(len(avg_list), 1, 1)
+    
     ax.set_ylabel(title)
 
     if labels is not None and len(labels) == len(avg_list):
