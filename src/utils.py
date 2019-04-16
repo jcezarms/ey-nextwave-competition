@@ -7,7 +7,7 @@ import seaborn as sns
 import geopandas as gpd
 import matplotlib.cm as cm
 import matplotlib.pyplot as plt
-from shapely.geometry import Polygon, LineString
+from shapely.geometry import Point, Polygon, LineString
 
 # geopandas plots depend on setting values upon a GeoDataFrame's 'geometry' column.
 # for clarity purposes, the resultant warnings about chained assignment will be suppressed.
@@ -21,9 +21,18 @@ center = {
 center['x_middle'] = center['x_min'] + (center['x_max'] - center['x_min'])/2
 center['y_middle'] = center['y_min'] + (center['y_max'] - center['y_min'])/2
 
+center['left_border'] = LineString([ (center['x_min'], center['y_min']), (center['x_min'], center['y_max']) ])
+center['right_border'] = LineString([ (center['x_max'], center['y_min']), (center['x_max'], center['y_max']) ])
+center['top_border'] = LineString([ (center['x_min'], center['y_max']), (center['x_max'], center['y_max']) ])
+center['bottom_border'] = LineString([ (center['x_min'], center['y_min']), (center['x_max'], center['y_min']) ])
+
 center_polygon = Polygon([(center['x_min'], center['y_min']), (center['x_min'], center['y_max']),
                           (center['x_max'], center['y_max']), (center['x_max'], center['y_min'])])
+
 center_polygon_row = pd.DataFrame({ 'geometry': center_polygon }, index=[0])
+
+def entry_border_distance(row, border):
+    return Point(row['x_entry'], row['y_entry']).distance(center[border])
 
 def geoplot(sample_df, figsize=(25, 27), ax=None, start='15:00:00', end='16:00:00'):
     # Sampling
