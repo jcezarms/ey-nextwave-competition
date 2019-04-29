@@ -31,6 +31,61 @@ center_polygon = Polygon([(center['x_min'], center['y_min']), (center['x_min'], 
 
 center_polygon_row = pd.DataFrame({ 'geometry': center_polygon }, index=[0])
 
+def entry_to_center_angles(row):
+    
+    if np.isnan(row['last_x_entry']) or np.isnan(row['last_y_entry']):
+        row[[
+            'cc_middle_angle', 'cc_xmin_ymin_angle', 'cc_xmax_ymin_angle', 'cc_xmin_ymax_angle', 'cc_xmax_ymax_angle'
+        ]] = np.nan
+        
+        return row
+    
+    last_to_current_entry = LineString([(row['last_x_entry'], row['last_y_entry']), (row['x_entry'], row['y_entry'])])
+    
+    to_center_lines = {
+        'middle': LineString([(row['last_x_entry'], row['last_y_entry']), (center['x_middle'], center['y_middle'])]),
+        'xmin_ymin': LineString([(row['last_x_entry'], row['last_y_entry']), (center['x_min'], center['y_min'])]),
+        'xmin_ymax': LineString([(row['last_x_entry'], row['last_y_entry']), (center['x_min'], center['y_max'])]),
+        'xmax_ymin': LineString([(row['last_x_entry'], row['last_y_entry']), (center['x_max'], center['y_min'])]),
+        'xmax_ymax': LineString([(row['last_x_entry'], row['last_y_entry']), (center['x_max'], center['y_max'])])
+    }
+    
+    row['cc_middle_angle'] = angle_between(last_to_current_entry, to_center_lines['middle'])
+    row['cc_xmin_ymin_angle'] = angle_between(last_to_current_entry, to_center_lines['xmin_ymin'])
+    row['cc_xmax_ymin_angle'] = angle_between(last_to_current_entry, to_center_lines['xmax_ymin'])
+    row['cc_xmin_ymax_angle'] = angle_between(last_to_current_entry, to_center_lines['xmin_ymax'])
+    row['cc_xmax_ymax_angle'] = angle_between(last_to_current_entry, to_center_lines['xmax_ymax'])
+    
+    return row
+    
+def angle_between(line1, line2):
+    coords_1 = line1.coords
+    coords_2 = line2.coords
+    
+    line1_vertical = (coords_1[1][0] - coords_1[0][0]) == 0.0
+    line2_vertical = (coords_2[1][0] - coords_2[0][0]) == 0.0
+    
+    # Vertical lines have undefined slope, but we know their angle in rads is = 90° * π/180
+    if line1_vertical and line2_vertical:
+        # Perpendicular vertical lines
+        return 0.0
+    if line1_vertical or line2_vertical:
+        # 90° - angle of non-vertical line
+        non_vertical_line = line2 if line1_vertical else line1
+        return abs((90.0 * np.pi / 180.0) - np.arctan(slope(non_vertical_line)))
+    
+    m1 = slope(line1)
+    m2 = slope(line2)
+    
+    return abs(np.arctan((m1 - m2)/(1 + m1*m2)))
+
+def slope(line):
+    x0 = line.coords[0][0]
+    y0 = line.coords[0][1]
+    x1 = line.coords[1][0]
+    y1 = line.coords[1][1]
+    return (y1 - y0) / (x1 - x0)
+
 def entry_border_distance(row, border):
     return Point(row['x_entry'], row['y_entry']).distance(center[border])
 
