@@ -9,10 +9,6 @@ import matplotlib.cm as cm
 import matplotlib.pyplot as plt
 from shapely.geometry import Point, Polygon, LineString
 
-# geopandas plots depend on setting values upon a GeoDataFrame's 'geometry' column.
-# for clarity purposes, the resultant warnings about chained assignment will be suppressed.
-pd.options.mode.chained_assignment = None
-
 center = {
     'x_min': 3750901.5068, 'y_min': -19268905.6133,
     'x_max': 3770901.5068, 'y_max': -19208905.6133
@@ -21,10 +17,11 @@ center = {
 center['x_middle'] = center['x_min'] + (center['x_max'] - center['x_min'])/2
 center['y_middle'] = center['y_min'] + (center['y_max'] - center['y_min'])/2
 
-center['left_border'] = LineString([ (center['x_min'], center['y_min']), (center['x_min'], center['y_max']) ])
-center['right_border'] = LineString([ (center['x_max'], center['y_min']), (center['x_max'], center['y_max']) ])
-center['top_border'] = LineString([ (center['x_min'], center['y_max']), (center['x_max'], center['y_max']) ])
-center['bottom_border'] = LineString([ (center['x_min'], center['y_min']), (center['x_max'], center['y_min']) ])
+center['left_border']  = LineString([(center['x_min'], center['y_min']), (center['x_min'], center['y_max'])])
+center['right_border'] = LineString([(center['x_max'], center['y_min']), (center['x_max'], center['y_max'])])
+
+center['lower_border']  = LineString([(center['x_min'], center['y_min']), (center['x_max'], center['y_min'])])
+center['upper_border']  = LineString([(center['x_min'], center['y_max']), (center['x_max'], center['y_max'])])
 
 center_polygon = Polygon([(center['x_min'], center['y_min']), (center['x_min'], center['y_max']),
                           (center['x_max'], center['y_max']), (center['x_max'], center['y_min'])])
@@ -126,6 +123,9 @@ def dist_to_center(condition, middle_prop, entry, df):
     return dist / dist.max()
 
 def center_permanency(row):
+    
+    if np.isnan(row['x_exit']) or np.isnan(row['y_exit']):
+        return np.nan
     
     line = LineString([(row['x_entry'], row['y_entry']), (row['x_exit'], row['y_exit'])])
     
