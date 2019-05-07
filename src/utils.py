@@ -29,7 +29,23 @@ center_polygon = Polygon([(center['x_min'], center['y_min']), (center['x_min'], 
 center_polygon_row = pd.DataFrame({ 'geometry': center_polygon }, index=[0])
 
 def entry_to_center_angles(row):
+    """
+    Calculates the angle between a trajectory's entry and Atlanta's center vertexes.
     
+    Gives the angle between two lines: 1) previous trajectory to center vertexes, and 2) previous trajectory to current.
+    Computes such angle for all vertexes throughout the city center - and also for its center point. Line 2) is composed of
+    both trajectories' entry coordinates.
+    
+    Parameters
+    ----------
+    row : pandas.Series
+        Row of a DataFrame over which to calculate these angles.
+        
+    Returns
+    -------
+    row : pandas.Series
+        Input row after resulting angles assignment.
+    """
     if np.isnan(row['last_x_entry']) or np.isnan(row['last_y_entry']):
         row[[
             'cc_middle_angle', 'cc_xmin_ymin_angle', 'cc_xmax_ymin_angle', 'cc_xmin_ymax_angle', 'cc_xmax_ymax_angle'
@@ -47,15 +63,29 @@ def entry_to_center_angles(row):
         'xmax_ymax': LineString([(row['last_x_entry'], row['last_y_entry']), (center['x_max'], center['y_max'])])
     }
     
-    row['cc_middle_angle'] = angle_between(last_to_current_entry, to_center_lines['middle'])
-    row['cc_xmin_ymin_angle'] = angle_between(last_to_current_entry, to_center_lines['xmin_ymin'])
-    row['cc_xmax_ymin_angle'] = angle_between(last_to_current_entry, to_center_lines['xmax_ymin'])
-    row['cc_xmin_ymax_angle'] = angle_between(last_to_current_entry, to_center_lines['xmin_ymax'])
-    row['cc_xmax_ymax_angle'] = angle_between(last_to_current_entry, to_center_lines['xmax_ymax'])
+    for vertex in ['xmin_ymin', 'xmax_ymin', 'xmin_ymax', 'xmax_ymax', 'middle']:
+        row[f'cc_{vertex}_angle'] = angle_between(last_to_current_entry, to_center_lines[vertex])
     
     return row
     
 def angle_between(line1, line2):
+    """
+    The angle between two lines.
+    
+    Valid angle calculation for any two lines, even if any of them or both are vertical.
+    
+    Parameters
+    ----------
+    line1 : shapely.LineString
+        First line for comparison.
+    line2 : shapely.LineString
+        Second line for comparison.
+    
+    Returns
+    -------
+    float
+        The resulting angle in rads.
+    """
     coords_1 = line1.coords
     coords_2 = line2.coords
     
@@ -77,17 +107,41 @@ def angle_between(line1, line2):
     return abs(np.arctan((m1 - m2)/(1 + m1*m2)))
 
 def slope(line):
+    """
+    Cartesian line slope, classically defined as Δy/Δx.
+    
+    Parameters
+    ----------
+    line: shapely.LineString
+        The line for which to calculate slope.
+    """
     x0 = line.coords[0][0]
     y0 = line.coords[0][1]
     x1 = line.coords[1][0]
     y1 = line.coords[1][1]
     return (y1 - y0) / (x1 - x0)
 
-def entry_border_distance(row, border):
-    return Point(row['x_entry'], row['y_entry']).distance(center[border])
-
 def geoplot(sample_df, figsize=(25, 27), ax=None, start='15:00:00', end='16:00:00'):
-    # Sampling
+    """
+    Plots a DataFrame's entry-to-exit trajectories in a cartesian plane, along to the city center polygon.
+    
+    Creates shapely.LineString's representing entry-to-exit cartesian trajectories throughout the DataFrame,
+    then plotting those within a predefined time frame. Will always plot the Atlanta's center polygon alongside.
+    
+    Parameters
+    ----------
+    sample_df : pandas.DataFrame
+        The sample DataFrame from which to plot trajectories.
+    figsize : (int, int)
+        Matplotlib figsize for the plot.
+    ax : matplotlib.axes._subplots.AxesSubplot
+        Matplotlib ax into which to plot.
+    start : str
+        Start of trajectory time frame sample. Formatted as HH:mm:ss.
+    end : str
+        End of trajectory time frame sample. Formatted as HH:mm:ss.
+    """
+    # Time-wise sampling
     starttime = pd.to_timedelta(start)
     endtime = pd.to_timedelta(end)
     
@@ -97,6 +151,7 @@ def geoplot(sample_df, figsize=(25, 27), ax=None, start='15:00:00', end='16:00:0
         axis = 1
     )
     
+    # Addition of Atlanta's center polygon
     samples_plus_center = pd.concat([samples, center_polygon_row], sort=False)
     
     # Geo plot
@@ -116,6 +171,7 @@ def is_inside_city(x, y):
         return 0
 
 def euclidian_distance(x_one, y_one, x_two, y_two):
+    """Distance as defined by the Euclidian formula for the ((x1, y1), (x2, y2)) case."""
     return np.sqrt(np.power((x_one-x_two), 2) + np.power((y_one-y_two), 2))
 
 def dist_to_center(condition, middle_prop, entry, df):
@@ -123,8 +179,14 @@ def dist_to_center(condition, middle_prop, entry, df):
     return dist / dist.max()
 
 def center_permanency(row):
+    """
+    Computes the percentage of a trajectory's stay in Atlanta's center.
     
-    if np.isnan(row['x_exit']) or np.isnan(row['y_exit']):
+    Having an entry-to-exit trajectory with length n, its center permanency represents
+    the percentage of n that happens inside Atlanta's center polygon, in a [0,1] interval.
+    Trajectories starting and ending within the center will then have 
+    """
+    if any(np.isnan(row[col]) for col in ['x_exit', 'y_exit']):
         return np.nan
     
     line = LineString([(row['x_entry'], row['y_entry']), (row['x_exit'], row['y_exit'])])
@@ -133,7 +195,7 @@ def center_permanency(row):
             return 0
     
     if line.length == 0:
-        # avoids divisions by 0 in 'point' trajectories
+        # Avoids divisions by 0 in 'point' trajectories
         return 1
     
     return line.intersection(center_polygon).length / line.length
