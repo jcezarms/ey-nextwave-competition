@@ -1,6 +1,8 @@
 '''
 Helper functions to analyse data on ey-data-challenge
 '''
+
+from math import radians, cos, sin, asin, sqrt
 import numpy as np
 import pandas as pd
 import seaborn as sns
@@ -9,20 +11,24 @@ import matplotlib.cm as cm
 import matplotlib.pyplot as plt
 from shapely.geometry import Point, Polygon, LineString
 
+# City center variables
 center = {
     'x_min': 3750901.5068, 'y_min': -19268905.6133,
     'x_max': 3770901.5068, 'y_max': -19208905.6133
 }
 
-center['x_middle'] = center['x_min'] + (center['x_max'] - center['x_min'])/2
-center['y_middle'] = center['y_min'] + (center['y_max'] - center['y_min'])/2
+# Middle points
+center['x_mid'] = center['x_min'] + ((center['x_max'] - center['x_min'])/2)
+center['y_mid'] = center['y_min'] + ((center['y_max'] - center['y_min'])/2)
 
+# Borders
 center['left_border']  = LineString([(center['x_min'], center['y_min']), (center['x_min'], center['y_max'])])
 center['right_border'] = LineString([(center['x_max'], center['y_min']), (center['x_max'], center['y_max'])])
 
 center['lower_border']  = LineString([(center['x_min'], center['y_min']), (center['x_max'], center['y_min'])])
 center['upper_border']  = LineString([(center['x_min'], center['y_max']), (center['x_max'], center['y_max'])])
 
+# Polygon
 center_polygon = Polygon([(center['x_min'], center['y_min']), (center['x_min'], center['y_max']),
                           (center['x_max'], center['y_max']), (center['x_max'], center['y_min'])])
 
@@ -56,7 +62,7 @@ def entry_to_center_angles(row):
     last_to_current_entry = LineString([(row['last_x_entry'], row['last_y_entry']), (row['x_entry'], row['y_entry'])])
     
     to_center_lines = {
-        'middle': LineString([(row['last_x_entry'], row['last_y_entry']), (center['x_middle'], center['y_middle'])]),
+        'middle': LineString([(row['last_x_entry'], row['last_y_entry']), (center['x_mid'], center['y_mid'])]),
         'xmin_ymin': LineString([(row['last_x_entry'], row['last_y_entry']), (center['x_min'], center['y_min'])]),
         'xmin_ymax': LineString([(row['last_x_entry'], row['last_y_entry']), (center['x_min'], center['y_max'])]),
         'xmax_ymin': LineString([(row['last_x_entry'], row['last_y_entry']), (center['x_max'], center['y_min'])]),
@@ -170,9 +176,30 @@ def is_inside_city(x, y):
     else:
         return 0
 
-def euclidian_distance(x_one, y_one, x_two, y_two):
-    """Distance as defined by the Euclidian formula for the ((x1, y1), (x2, y2)) case."""
+def euclidean(x_one, y_one, x_two, y_two):
+    """Distance as defined by the Euclidean formula for the ((x1, y1), (x2, y2)) case."""
     return np.sqrt(np.power((x_one-x_two), 2) + np.power((y_one-y_two), 2))
+
+def manhattan(x_one, y_one, x_two, y_two):
+    """Distance as defined by the Manhattan formula for the ((x1, y1), (x2, y2)) case."""
+    return abs(x_one-x_two) + abs(y_one-y_two)
+
+def haversine(lon1, lat1, lon2, lat2):
+    """
+    Calculate the great circle distance between two points 
+    on the earth (specified in decimal degrees)
+    """
+    # convert decimal degrees to radians
+    for l in [lon1, lat1, lon2, lat2]:
+        l = np.radians(l)
+
+    # haversine formula 
+    dlon = lon2 - lon1 
+    dlat = lat2 - lat1 
+    a = np.sin(dlat/2)**2 + np.cos(lat1) * np.cos(lat2) * np.sin(dlon/2)**2
+    c = 2 * np.arcsin(np.sqrt(a)) 
+    r = 6371 # Radius of earth in kilometers. Use 3956 for miles
+    return c * r
 
 def dist_to_center(condition, middle_prop, entry, df):
     dist = abs( center[middle_prop] - df[condition][entry].values )
@@ -184,13 +211,26 @@ def center_permanency(row):
     
     Having an entry-to-exit trajectory with length n, its center permanency represents
     the percentage of n that happens inside Atlanta's center polygon, in a [0,1] interval.
-    Trajectories starting and ending within the center will then have 
+    Trajectories starting and ending within the center will then have permanency equal to 1,
+    as those that start and end out of the center have it equal to 0.
+    
+    Parameters
+    ----------
+    row : pandas.Series
+        Row onto which the center permanency will be based.
+    
+    Returns
+    -------
+    float
+        The entry-to-exit trajectory center permanency as a percentage.
     """
     if any(np.isnan(row[col]) for col in ['x_exit', 'y_exit']):
         return np.nan
     
     line = LineString([(row['x_entry'], row['y_entry']), (row['x_exit'], row['y_exit'])])
     
+    crossed = line.crosses(center_polygon)
+ 
     if not line.intersects(center_polygon):
             return 0
     
@@ -200,8 +240,18 @@ def center_permanency(row):
     
     return line.intersection(center_polygon).length / line.length
 
+def crossed_city(row):
+    if any(np.isnan(row[col]) for col in ['x_exit', 'y_exit']):
+        return np.nan
+    
+    line = LineString([(row['x_entry'], row['y_entry']), (row['x_exit'], row['y_exit'])])
+    
+    crossed = 1 if line.crosses(center_polygon) is True else 0
+    return crossed
+
+
 def distplot(df, index, figsize=(12, 8), groupby='hash', label='', ax=None):
-    grouped = df.groupby(groupby)[index]
+    grouped = df.dropna().groupby(groupby)[index]
 
     if ax is None:
         fig = plt.figure(figsize=figsize)
