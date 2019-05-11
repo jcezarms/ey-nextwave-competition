@@ -3,6 +3,7 @@ Helper functions to analyse data on ey-data-challenge
 '''
 
 from math import radians, cos, sin, asin, sqrt
+import pyproj
 import numpy as np
 import pandas as pd
 import seaborn as sns
@@ -11,11 +12,39 @@ import matplotlib.cm as cm
 import matplotlib.pyplot as plt
 from shapely.geometry import Point, Polygon, LineString
 
+
+converter = pyproj.Proj("+proj=merc +lat_ts=0 +lat_0=0 +lon_0=0 +x_0=0 \
+                    +y_0=0 +ellps=WGS84 +datum=WGS84 +units=m +no_defs")
+
 # City center variables
 center = {
     'x_min': 3750901.5068, 'y_min': -19268905.6133,
     'x_max': 3770901.5068, 'y_max': -19208905.6133
 }
+
+# Lat/Lon center points
+lat_min, lon_min  = converter(center['x_min'], center['y_min'], inverse=True)
+lat_max, lon_max  = converter(center['x_max'], center['y_max'], inverse=True)
+
+center['lon_min'] = lon_min
+center['lon_max'] = lon_max
+
+center['lat_min'] = lat_min
+center['lat_max'] = lat_max
+
+center['lon_mid'] = center['lon_min'] + ((center['lon_max'] - center['lon_min'])/2)
+center['lat_mid'] = center['lat_min'] + ((center['lat_max'] - center['lat_min'])/2)
+
+# Lat/Lon Borders
+center['left_latlon_border']  = LineString([(center['lon_min'], center['lat_min']), (center['lon_min'], center['lat_max'])])
+center['right_latlon_border'] = LineString([(center['lon_max'], center['lat_min']), (center['lon_max'], center['lat_max'])])
+
+center['lower_latlon_border']  = LineString([(center['lon_min'], center['lat_min']), (center['lon_max'], center['lat_min'])])
+center['upper_latlon_border']  = LineString([(center['lon_min'], center['lat_max']), (center['lon_max'], center['lat_max'])])
+
+# Lat/Lon Polygon
+center_polygon_latlon = Polygon([(center['lat_min'], center['lon_min']), (center['lat_min'], center['lon_max']),
+                          (center['lat_max'], center['lon_max']), (center['lat_max'], center['lon_min'])])
 
 # Middle points
 center['x_mid'] = center['x_min'] + ((center['x_max'] - center['x_min'])/2)
@@ -127,7 +156,16 @@ def slope(line):
     y1 = line.coords[1][1]
     return (y1 - y0) / (x1 - x0)
 
-def geoplot(sample_df, figsize=(25, 27), ax=None, start='15:00:00', end='16:00:00'):
+def geoplot(sample_df,
+            figsize=(25, 27),
+            ax=None,
+            window_reference=None,
+            filter_by_time=True,
+            time_is_timedelta=True,
+            start='15:00:00',
+            end='16:00:00',
+            time_entry_col='time_entry',
+            time_exit_col='time_exit'):
     """
     Plots a DataFrame's entry-to-exit trajectories in a cartesian plane, along to the city center polygon.
     
@@ -148,17 +186,24 @@ def geoplot(sample_df, figsize=(25, 27), ax=None, start='15:00:00', end='16:00:0
         End of trajectory time frame sample. Formatted as HH:mm:ss.
     """
     # Time-wise sampling
-    starttime = pd.to_timedelta(start)
-    endtime = pd.to_timedelta(end)
+    if time_is_timedelta:
+        start = pd.to_timedelta(start)
+        end = pd.to_timedelta(end)
     
-    samples = sample_df[(sample_df.time_entry >= starttime) & (sample_df.time_exit <= endtime)]
+    samples = sample_df.copy()
+    
+    sfx = f'_{window_reference}' if window_reference is not None else ''
+    
+    if filter_by_time:
+        samples = sample_df[(sample_df[time_entry_col] >= start) & (sample_df[time_exit_col] <= end)]
+    
     samples['geometry'] = samples.apply(
-        lambda row: LineString([ (row['x_entry'], row['y_entry']), (row['x_exit'], row['y_exit']) ]),
+        lambda row: LineString([ (row['x_entry'+sfx], row['y_entry'+sfx]), (row['x_exit'+sfx], row['y_exit'+sfx]) ]),
         axis = 1
     )
     
     # Addition of Atlanta's center polygon
-    samples_plus_center = pd.concat([samples, center_polygon_row], sort=False)
+    samples_plus_center = pd.concat([samples, center_polygon_row])
     
     # Geo plot
     geodf = gpd.GeoDataFrame(samples_plus_center)
@@ -205,7 +250,7 @@ def dist_to_center(condition, middle_prop, entry, df):
     dist = abs( center[middle_prop] - df[condition][entry].values )
     return dist / dist.max()
 
-def center_permanency(row):
+def center_permanency(row, polygon=center_polygon):
     """
     Computes the percentage of a trajectory's stay in Atlanta's center.
     
@@ -229,16 +274,16 @@ def center_permanency(row):
     
     line = LineString([(row['x_entry'], row['y_entry']), (row['x_exit'], row['y_exit'])])
     
-    crossed = line.crosses(center_polygon)
+    crossed = line.crosses(polygon)
  
-    if not line.intersects(center_polygon):
+    if not line.intersects(polygon):
             return 0
     
     if line.length == 0:
         # Avoids divisions by 0 in 'point' trajectories
         return 1
     
-    return line.intersection(center_polygon).length / line.length
+    return line.intersection(polygon).length / line.length
 
 def crossed_city(row):
     if any(np.isnan(row[col]) for col in ['x_exit', 'y_exit']):
