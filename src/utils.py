@@ -43,8 +43,8 @@ center['lower_latlon_border']  = LineString([(center['lon_min'], center['lat_min
 center['upper_latlon_border']  = LineString([(center['lon_min'], center['lat_max']), (center['lon_max'], center['lat_max'])])
 
 # Lat/Lon Polygon
-center_polygon_latlon = Polygon([(center['lat_min'], center['lon_min']), (center['lat_min'], center['lon_max']),
-                          (center['lat_max'], center['lon_max']), (center['lat_max'], center['lon_min'])])
+center_polygon_latlon = Polygon([(center['lon_min'], center['lat_min']), (center['lon_min'], center['lat_max']),
+                          (center['lon_max'], center['lat_max']), (center['lon_max'], center['lat_min'])])
 
 # Middle points
 center['x_mid'] = center['x_min'] + ((center['x_max'] - center['x_min'])/2)
