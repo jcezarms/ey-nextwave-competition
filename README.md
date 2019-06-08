@@ -21,9 +21,9 @@ This is our winning submission for EY NextWave Data Science Competition. Our win
 Our winning F1-score and model ranking:
 
 | Leaderboard | Score | Brazilian Ranking | Global Ranking |
-|      :---:      |      :---:      |     :---:      |     :---:      |     :---:      |
+|      :---:      |      :---:      |     :---:      |     :---:      |
 | Private | 0.89401  | 2nd | 23th |
-| Public |0.8853  | 3rd | 31th |
+| Public | 0.8853  | 3rd | 31th |
 
 > On the finals in Brazil, we presented our work and were selected as winners for creating a project focused not only on F1-score optimization but also on soft skills, a problem oriented Machine Learning approach and thorough research on the field.
 
