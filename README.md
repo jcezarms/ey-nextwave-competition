@@ -14,8 +14,6 @@ A work by
 </tr>
 </table>
 
----
-
 This is our winning submission for EY NextWave Data Science Competition. Our win was decided upon the combination of our final score and [this presentation](LINK). The target of this competition consisted on predicting if a trajectory sequence would end up inside Atlanta's city center around 15:00-16:00 using geolocation data.
 
 Our winning F1-score and model ranking:
