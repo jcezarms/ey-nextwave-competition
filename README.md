@@ -30,7 +30,7 @@ We focused on agglomerating a robust amount of research-based features - based o
 
 ![Sequence format and distances](./reports/figures/formatting_and_sequences.PNG)
 
-We managed to work with all features enabled by our insights and research - from agglomerating every feature possible in every way allowed by `pandas`, to [using external data](LINK) like road and traffic information.
+We managed to work with all features enabled by our insights and research - from agglomerating every feature possible in every way allowed by `pandas`, to [using external data](https://github.com/jcezarms/ey-nextwave-competition/tree/master/data/external) like road and traffic information.
 
 # Guidelines
 ## EY NextWave Data Science Competition 2019
