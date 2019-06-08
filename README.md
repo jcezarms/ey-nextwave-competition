@@ -1,13 +1,24 @@
-Geolock
-==============================
+# EY NEXTWAVE DATA SCIENCE COMPETITION 2019 - WINNER PROJECT
 
-Smart City AI model submission for EY Next Week 2019.
+ This is our winning submission for EY NextWave Data Science Competition. Our win was decided upon the combination of our final score, coupled with [this presentation](link to presentation). This competition consisted of predicting if a trajectory would end up inside atlanta's city center around 15:00-16:00 using geolocation data.
+
+Our final results were in F1-score:
+
+- Public Leaderboard: 0.89401 - 2nd place on Brazilian ranking | 23th on Global Ranking
+- Private Leaderboard: 0.8853 - 3rd place on Brazilian ranking | 31th on Global Ranking
+
+**On the finals in Brazil we presented our work and were selected the winner for creating a project focused not only on F1-score but also on soft skills, problem oriented machine learning approach and thorough research on the field.**
+
+# Strategy
+
+## Advantages
+
+## Future Work
 
 # Guidelines
 ## EY NextWave Data Science Competition 2019
 
 In this document we will give orientations and discuss each component our final submission is made of. The complete work is spread throughout several notebooks, each belonging to a certain execution order. A purpose summary and description will also be given over every notebook present.
-
 
 ## Notebooks
 
