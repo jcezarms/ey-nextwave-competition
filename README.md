@@ -1,19 +1,22 @@
 # EY NEXTWAVE DATA SCIENCE COMPETITION 2019 - WINNER PROJECT
 
- This is our winning submission for EY NextWave Data Science Competition. Our win was decided upon the combination of our final score, coupled with [this presentation](link to presentation). This competition consisted of predicting if a trajectory would end up inside atlanta's city center around 15:00-16:00 using geolocation data.
+This is a work by [Victor Oliveira](https://www.linkedin.com/in/victor-oliveira-b0634449/) & [Julio Cezar Silva](https://www.linkedin.com/in/julio-cms/)
+
+ This is our winning submission for EY NextWave Data Science Competition. Our win was decided upon the combination of our final score, coupled with [this presentation](LINK). This competition consisted of predicting if a trajectory would end up inside atlanta's city center around 15:00-16:00 using geolocation data.
 
 Our final results were in F1-score:
 
 - Public Leaderboard: 0.89401 - 2nd place on Brazilian ranking | 23th on Global Ranking
 - Private Leaderboard: 0.8853 - 3rd place on Brazilian ranking | 31th on Global Ranking
 
-**On the finals in Brazil we presented our work and were selected the winner for creating a project focused not only on F1-score but also on soft skills, problem oriented machine learning approach and thorough research on the field.**
+> On the finals in Brazil we presented our work and were selected as winners for creating a project focused not only on F1-score optimization but also on soft skills, problem oriented Machine Learning approach and thorough research on the field.
 
 # Strategy
+We focused on agglomerating a robust amount of research-based features - based on sequence data format and geometrical insights. For a full rundown of all our features, you can either refer to [our final submission notebook](./notebooks/08_final_submission.ipynb) or [watch the presentation](LINK), but here are some of the most prominent feature examples:
 
-## Advantages
+![Sequence format and distances](./reports/figures/formatting_and_sequences.PNG)
 
-## Future Work
+We managed to work with all features enabled by our insights and research - from agglomerating every feature possible in every way allowed by `pandas`, to [using external data](LINK) like road and traffic information.
 
 # Guidelines
 ## EY NextWave Data Science Competition 2019
