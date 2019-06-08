@@ -33,7 +33,6 @@ We focused on agglomerating a robust amount of research-based features - based o
 We managed to work with all features enabled by our insights and research - from agglomerating every feature possible in every way allowed by `pandas`, to [using external data](https://github.com/jcezarms/ey-nextwave-competition/tree/master/data/external) like road and traffic information.
 
 # Guidelines
-## EY NextWave Data Science Competition 2019
 
 In this document we will give orientations and discuss each component our final submission is made of. The complete work is spread throughout several notebooks, each belonging to a certain execution order. A purpose summary and description will also be given over every notebook present.
 
