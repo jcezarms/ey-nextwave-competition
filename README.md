@@ -45,7 +45,7 @@ Our winning F1-score and model ranking:
 > On the finals in Brazil, we presented our work and were selected as winners for creating a project focused not only on F1-score optimization but also on soft skills, a problem oriented Machine Learning approach and thorough research on the field.
 
 # Strategy
-We focused on agglomerating a robust amount of research-based features - based on sequence data format and geometrical insights. For a full rundown of all our features, you can either refer to [our final submission notebook](./notebooks/08_final_submission.ipynb) or [watch the presentation](LINK), but here are some of the most prominent feature examples:
+We focused on agglomerating a robust amount of research-based features - based on sequence data format and geometrical insights. For a full rundown of all our features, you can either refer to 📜 [our final submission notebook](./notebooks/08_final_submission.ipynb) or 🎥 [watch the presentation](LINK), but here are some of the most prominent feature examples:
 
 ![Sequence format and distances](./reports/figures/formatting_and_sequences.PNG)
 
