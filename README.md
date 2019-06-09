@@ -28,8 +28,8 @@ A work by
 		- [Exploring External Data](#exploring-external-data)
 		- [Feature Engineering and Final Submission](#feature-engineering-and-final-submission)
 	- [Utilities](#utilities)
-		- [File: utils.py](#file-utilspy)
-		- [File: lstm.py](#file-lstmpy)
+		- [utils.py](#utilspy)
+		- [lstm.py](#lstmpy)
 
 ## Overview
 
@@ -109,10 +109,10 @@ The concluding body of work that englobes a documented trajectory directed towar
 
 A brief introduction of the utility files present in the project.
 
-### File: [utils.py](./src/utils.py)
+### [utils.py](./src/utils.py)
 
 In order to achieve a higher level of modularization, we decided to isolate specific code blocks from the many notebooks described above. It is clear that, throughout the several notebooks in this project’s setup, with demands such as those of plotting, processing and other necessarily repetitive tasks, there comes the need to redirect reusable code to a centralized resource - here, this is our utils script. Aside from that, it also serves as a readability asset, taking some overly complex code blocks out of the way of storytelling cycles - which also gave us space to organize and document those complex blocks without boundaries for e.g. docstring length.
 
-### File: [lstm.py](./src/lstm.py)
+### [lstm.py](./src/lstm.py)
 
-Much in the same motivation attended by the utils script, lstm.py centralizes the LSTM module class and instantiation, as well as training, validation and scoring functions, in an isolated and clear manner. This takes a considerable piece of code out of the LSTM notebook’s analysis flow and improves the overall maintainability.
+Much in the same motivation attended by the utils script, `lstm.py` centralizes the LSTM module class and instantiation, as well as training, validation and scoring functions, in an isolated and clear manner. This takes a considerable piece of code out of the LSTM notebook’s analysis flow and improves the overall maintainability.
