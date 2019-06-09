@@ -47,7 +47,9 @@ Our winning F1-score and model ranking:
 # Strategy
 We focused on agglomerating a robust amount of research-based features - based on sequence data format and geometrical insights. For a full rundown of all our features, you can either refer to 📜 [our final submission notebook](./notebooks/08_final_submission.ipynb) or 🎥 [watch the presentation](LINK), but here are some of the most prominent feature examples:
 
-![Sequence format and distances](./reports/figures/formatting_and_sequences.PNG)
+<p align="center">
+	<img width="700" src="reports/figures/structure_distance_examples.PNG">
+</p>
 
 We managed to work with all features enabled by our insights and research - from agglomerating every feature possible in every way allowed by `pandas`, to [using external data](https://github.com/jcezarms/ey-nextwave-competition/tree/master/data/external) like road and traffic information.
 
