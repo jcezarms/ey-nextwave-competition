@@ -1,4 +1,4 @@
-# EY NEXTWAVE DATA SCIENCE COMPETITION 2019 - WINNING PROJECT
+# EY NextWave Data Science Competition [2019]: **WINNING PROJECT**
 
 A work by
 <table>
