@@ -14,6 +14,25 @@ A work by
 </tr>
 </table>
 
+## Table of Contents
+- [Overview](#overview)
+- [Strategy](#strategy)
+- [Guidelines](#guidelines)
+	- [Notebooks](#notebooks)
+		- [Exploratory Data Analysis](#exploratory-data-analysis)
+		- [Clustering](#clustering)
+		- [Residual Analysis](#residual-analysis)
+		- [LSTM](#lstm)
+		- [Stacking Models](#stacking-models)
+		- [Training Models and Hyperparameter Tuning](#training-models-and-hyperparameter-tuning)
+		- [Exploring External Data](#exploring-external-data)
+		- [Feature Engineering and Final Submission](#feature-engineering-and-final-submission)
+	- [Utilities](#utilities)
+		- [File: utils.py](#file-utilspy)
+		- [File: lstm.py](#file-lstmpy)
+
+## Overview
+
 This is our winning submission for EY NextWave Data Science Competition. Our win was decided upon the combination of our final score and [this presentation](LINK). The target of this competition consisted on predicting if a trajectory sequence would end up inside Atlanta's city center around 15:00-16:00 using geolocation data.
 
 Our winning F1-score and model ranking:
