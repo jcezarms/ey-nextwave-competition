@@ -33,7 +33,7 @@ A work by
 
 ## Overview
 
-This is our winning submission for EY NextWave Data Science Competition. Our win was decided upon the combination of our final score and [this presentation](LINK). The target of this competition consisted on predicting if a trajectory sequence would end up inside Atlanta's city center around 15:00-16:00 using geolocation data.
+This is our winning submission for EY NextWave Data Science Competition. Our win was decided upon the combination of our final score and [this presentation](https://medium.com/@juliocezar/how-we-finished-3rd-and-still-won-a-data-science-competition-bf8a71cf8c38?source=friends_link&sk=9003e32fabf83cc716eb90069188a2fa). The target of this competition consisted on predicting if a trajectory sequence would end up inside Atlanta's city center around 15:00-16:00 using geolocation data.
 
 Our winning F1-score and model ranking:
 
@@ -45,7 +45,7 @@ Our winning F1-score and model ranking:
 > On the finals in Brazil, we presented our work and were selected as winners for creating a project focused not only on F1-score optimization but also on soft skills, a problem oriented Machine Learning approach and thorough research on the field.
 
 # Strategy
-We focused on agglomerating a robust amount of research-based features - based on sequence data format and geometrical insights. For a full rundown of all our features, you can either refer to 📜 [our final submission notebook](./notebooks/08_final_submission.ipynb) or 🎥 [watch the presentation](LINK), but here are some of the most prominent feature examples:
+We focused on agglomerating a robust amount of research-based features - based on sequence data format and geometrical insights. For a full rundown of all our features, you can either refer to 📜 [our final submission notebook](./notebooks/08_final_submission.ipynb) or [read the article](https://medium.com/@juliocezar/how-we-finished-3rd-and-still-won-a-data-science-competition-bf8a71cf8c38?source=friends_link&sk=9003e32fabf83cc716eb90069188a2fa) - we created the [Unboxing Data Science podcast on Spotify](https://open.spotify.com/show/5uMwR2ToyWBcsEntGHoCXX?si=iagXaHkqQhS1_AAZytcqgQ) to narrate it - but here are some of the most prominent feature examples:
 
 <p align="center">
 	<img width="700" src="reports/figures/structure_distance_examples.PNG">
